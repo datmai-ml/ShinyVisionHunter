@@ -41,7 +41,7 @@ class ShinyDetector(nn.Module):
         x = self.conv2(x)
         x = self.conv3(x)
 
-        x = x.view(frames, -1)
+        x = x.view(batch_size * frames, -1)
 
         x = self.fc1(x)
         x = self.relu(x)
@@ -52,6 +52,8 @@ class ShinyDetector(nn.Module):
         x = self.fc3(x)
         x = self.sigmoid(x)
 
-        x = torch.max(x, dim=0)[0] # looking for max value. are there ANY sparkles?
+        x = x.view(batch_size, frames, -1)
+
+        x = torch.max(x, dim=1)[0].squeeze(1) # looking for max value. are there ANY sparkles?
 
         return x
